@@ -1,0 +1,284 @@
+/* Universal Styles & Resets */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    text-decoration: none;
+    font-family: "Signika Negative", sans-serif;
+}
+
+html {
+    font-size: 60.5%; /* Makes 1rem = 10px */
+}
+
+/* Accessibility Helper Class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Main Container */
+.container {
+    width: 100%;
+    height: 100vh;
+    background-color: #ecf2ff;
+    position: relative;
+}
+
+/* Form Wrapper & Layout */
+.form-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100rem;
+    height: 65rem;
+    background-color: #fff;
+    display: flex;
+    border-radius: 2rem;
+    box-shadow: 0 0.3rem 3rem rgba(52, 61, 127, 0.3);
+    overflow: hidden;
+}
+
+.form-wrapper-left,
+.form-wrapper-right {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Initial State: Sign In page is visible, Sign Up page is hidden */
+.form-wrapper-left {
+    opacity: 0;
+    visibility: hidden; /* FIX: Changed from 'none' to 'hidden' */
+    transition: all 0.5s;
+}
+
+.form-wrapper-right {
+    transition: all 0.5s 1s;
+}
+
+/* Form Elements */
+.form-wrapper h1 {
+    font-size: 6rem;
+    color: #407bff;
+    margin: -5rem 0 6rem 0;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group input {
+    width: 25rem;
+    height: 5rem;
+    margin: 1rem 0;
+    border: none;
+    border-bottom: 0.2rem solid rgba(64, 123, 255, 0.5);
+    color: #407bff;
+    font-size: 2rem;
+    padding-right: 2rem;
+    background-color: transparent;
+}
+
+.input-group input::placeholder {
+    color: #407bff;
+    letter-spacing: 0.1rem;
+    font-size: 2rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.input-group input:focus {
+    border-color: #407bff;
+}
+
+.input-group i {
+    position: absolute;
+    top: 50%;
+    right: 0.5rem;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    color: #407bff;
+}
+
+.form-btn {
+    width: 20rem;
+    height: 4.5rem;
+    margin-top: 2rem;
+    border: none;
+    border-radius: 5rem;
+    background-color: #407bff;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 0.1rem;
+    box-shadow: 0 0.5rem 1rem rgba(64, 123, 255, 0.4);
+    cursor: pointer;
+}
+
+.form-btn:active { /* FIX: Corrected typo '.form.btn' to '.form-btn' */
+    transform: translateY(0.2rem);
+}
+
+.form-wrapper a {
+    position: absolute;
+    bottom: 4rem;
+    font-size: 1.9rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #407bff;
+}
+
+.signup-link {
+    right: 4rem;
+}
+
+.signin-link {
+    left: 4rem;
+}
+
+/* Animated Elements */
+.form-wrapper-bg {
+    position: absolute;
+    width: 100rem;
+    height: 100rem;
+    background-color: #407bff;
+    border-radius: 15rem;
+    left: -40%;
+    top: -90%;
+    transform-origin: right bottom;
+    transform: rotateZ(-40deg);
+    transition: transform 1.5s;
+}
+
+/* .form-wrapper img {
+    width: 35rem;
+    position: absolute;
+    z-index: 1;
+} */
+
+.form-wrapper img {
+    /* Increased width to make the image bigger */
+    width: 70rem; 
+    height: auto; /* Ensures the image scales proportionally */
+    position: absolute;
+    z-index: 1;
+}
+
+.img-left {
+     width: 55rem; 
+
+    /* Centering properties */
+    top: 50%;
+    left: 25%; /* Centered within the left 50% of the container */
+    transform: translate(-50%, -50%);
+
+    /* Kept the original transition */
+    transition: all 0.5s 1s;
+}
+.img-right {
+    top: 30%;
+    right: -10%;
+    transform: translateY(-5rem);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s;
+}
+
+/* Navigation / Animation State */
+.container.navigate .form-wrapper-bg {
+    transform: rotateZ(130deg) translate(15rem, 15rem);
+}
+
+.container.navigate .form-wrapper-left {
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.5s 1s;
+}
+
+.container.navigate .img-left {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-5rem);
+    transition: all 0.5s;
+}
+
+.container.navigate .form-wrapper-right {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s;
+}
+
+.container.navigate .img-right {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0); /* Animate to original position */
+    transition: all 0.5s 1s;
+}
+
+.form-btn {
+  background: #4b6cb7; /* blue gradient tone */
+  background: linear-gradient(to right, #95aeea, #1e62eb);
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-align: center;
+}
+
+/* ✅ Hover effect: scale + glow */
+.form-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(to right, #1c59d4, #6d8bd0);
+  box-shadow: 0 4px 15px rgba(75, 108, 183, 0.4);
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #182848;
+  text-transform: capitalize;
+  overflow: hidden;
+  border-right: 3px solid #4b6cb7;
+  white-space: nowrap;
+  width: 0;
+  animation: typing 7s steps(15) infinite alternate, blink 1s step-end infinite;
+}
+
+/* typing animation */
+@keyframes typing {
+  0% {
+    width: 0;
+  }
+  50% {
+    width: 200px; /* adjust to fit your text */
+  }
+  100% {
+    width: 0;
+  }
+}
+
+/* blinking cursor */
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}

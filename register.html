@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Sign In Forms</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <img src="/img/back.png" class="img-left" alt="" />
+            <img src="/img/img.png" class="img-right" alt="" />
+            <div class="form-wrapper-bg"></div>
+
+            <!-- ✅ Sign Up Form -->
+            <div class="form-wrapper-left">
+                <h1>sign up</h1>
+                <form class="form-signup" class="font" id="sigUpform">
+                    
+                    <div class="input-group">
+                        <input name="name" type="text" placeholder="UserName"/>
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input name="email" type="email" placeholder="Email" />
+                        <i class="fa-solid fa-envelope"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input name="password" type="password" placeholder="Password" />
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+
+                    <button class="form-btn" type="submit">Sign Up</button>
+                </form>
+                <a href="#" class="signin-link ">Sign In</a>
+            </div>
+
+            <!-- Sign In Form -->
+            <div class="form-wrapper-right">
+                <h1>sign In</h1>
+                <form class="form-signup" id="signInform">
+                    <div class="input-group">
+                        <input type="text" name="name" placeholder="UserName" />
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div class="input-group">
+                        <input name="password" type="password" placeholder="Password" />
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+
+                    <button class="form-btn form-btn" type="submit">Sign In</button>
+                </form>
+                <a href="#" class="signup-link">Sign Up</a>
+            </div>
+        </div>
+    </div>
+    <script src="/Js/script.js"></script>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(document).ready(function(){
+        $('#sigUpform').on('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            var formData = $(this).serialize(); // Serialize the form data
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/register',   // Laravel route
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token
+                },
+                success: function(response) {
+                    console.log('Success:', response);
+
+                    // Assuming your API returns: { token: "some_jwt_token", user: {...} }
+                    if(response.token) {
+                        localStorage.setItem('token', response.token);  // Store token in localStorage
+                        alert('Registration successful!');
+                    } else {
+                        alert('Registration succeeded, but no token received!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', xhr.responseText);
+                    alert('Registration failed!');
+                }
+            });
+        });
+
+        $('#signInform').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/login',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    console.log('Login Success:', response);
+
+                    if (response.token) {
+                        localStorage.setItem('token', response.token);
+                        alert('Login successful!');
+                        // Optionally redirect:
+                        // window.location.href = 'dashboard.html';
+                    } else {
+                        alert('Login succeeded, but no token received!');
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Login Error:', xhr.responseText);
+                    alert('Login failed!');
+                }
+            });
+        });
+    });
+</script>
+
+</html>
