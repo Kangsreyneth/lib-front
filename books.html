@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Books - LibraryBook</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8f9fa; }
+    .book-cover {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar { width: 70px; }
+      .sidebar h2 span, .sidebar ul li a span { display: none; }
+      .topbar, .main-content { margin-left: 70px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div>
+      <h2>
+        <img src="img/image.png" alt="Logo" style="width:40px;height:40px;border-radius:50%;" onerror="this.src='https://via.placeholder.com/40'" />
+        <span>LibraryBook</span>
+      </h2>
+      <ul>
+        <li><a href="dashboard.html" class="sidebar-link"><i class="bi bi-house-door-fill"></i><span>Home</span></a></li>
+        <li><a href="books.html" class="sidebar-link active"><i class="bi bi-book-fill"></i><span>Books</span></a></li>
+        <li><a href="Members.html" class="sidebar-link"><i class="bi bi-people-fill"></i><span>Members</span></a></li>
+        <li><a href="borrows.html" class="sidebar-link"><i class="bi bi-bar-chart-fill"></i><span>Borrow & Return</span></a></li>
+        <li><a href="Report.html" class="sidebar-link"><i class="bi bi-exclamation-triangle-fill"></i><span>Reports</span></a></li>
+        <li><a href="About.html" class="sidebar-link"><i class="bi bi-info-circle-fill"></i><span>About Us</span></a></li>
+      </ul>
+    </div>
+     <button class="logout-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">
+      <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+    </button>
+  </div>
+
+  <div class="topbar">
+    <div class="d-flex align-items-center gap-2">
+      <i class="bi bi-person-heart"></i>
+      <span id="currentUser">Guest</span>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="dashboard">
+      <h2 class="text-center mb-4">📚 Book Dashboard</h2>
+
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <div class="input-group" style="width: 250px;">
+          <input type="text" id="searchInputTop" class="form-control form-control-sm" placeholder="Search...">
+          <button class="btn btn-primary btn-sm" id="searchBtnTop"><i class="bi bi-search"></i></button>
+        </div>
+        <button class="btn btn-success ms-auto" data-bs-toggle="modal" data-bs-target="#addBookModal">
+          <i class="bi bi-plus-lg"></i> Add Book
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Cover</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Category</th>
+              <th>Qty</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookList"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Book Modal -->
+  <div class="modal fade" id="addBookModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="addBookForm">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title"><i class="bi bi-plus-circle"></i> Add New Book</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="form-floating mb-2">
+              <input type="text" id="addBookTitle" class="form-control" placeholder="Title" required>
+              <label>Book Title</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="text" id="addBookAuthor" class="form-control" placeholder="Author" required>
+              <label>Author</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="text" id="addBookCategory" class="form-control" placeholder="Category" required>
+              <label>Category</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="number" id="addBookQuantity" class="form-control" placeholder="Quantity" required>
+              <label>Quantity</label>
+            </div>
+            <div class="form-floating mb-2">
+              <textarea id="addBookDescription" class="form-control" style="height:80px" placeholder="Description" required></textarea>
+              <label>Description</label>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small">Cover Image</label>
+              <input type="file" id="addBookImage" class="form-control shadow-none border" accept="image/*" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Add Book</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Book Modal -->
+  <div class="modal fade" id="editBookModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="editBookForm">
+          <div class="modal-header bg-warning">
+            <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit Book</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editBookIndex">
+            <div class="form-floating mb-2">
+              <input type="text" id="editBookTitle" class="form-control" placeholder="Title" required>
+              <label>Book Title</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="text" id="editBookAuthor" class="form-control" placeholder="Author" required>
+              <label>Author</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="text" id="editBookCategory" class="form-control" placeholder="Category" required>
+              <label>Category</label>
+            </div>
+            <div class="form-floating mb-2">
+              <input type="number" id="editBookQuantity" class="form-control" placeholder="Quantity" required>
+              <label>Quantity</label>
+            </div>
+            <div class="form-floating mb-2">
+              <textarea id="editBookDescription" class="form-control" style="height:80px" placeholder="Description" required></textarea>
+              <label>Description</label>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small">Cover Image</label>
+              <input type="file" id="editBookImage" class="form-control shadow-none border" accept="image/*">
+              <img id="editBookPreview" src="/placeholder.svg" class="book-cover mt-2">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-warning">Update</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <p>Are you sure you want to delete this book?</p>
+          <button class="btn btn-danger me-2" id="confirmDeleteBtn">Delete</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout Modal -->
+  <div class="modal fade" id="logoutModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Confirm Logout</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center text-danger fw-semibold fs-5">
+          ⚠️ Are you sure you want to logout?
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger px-4" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      const $bookList = $("#bookList");
+      const deleteModal = new bootstrap.Modal($("#deleteModal")[0]);
+      const editModal = new bootstrap.Modal($("#editBookModal")[0]);
+      const addModal = new bootstrap.Modal($("#addBookModal")[0]);
+
+      let books = [];
+      let deleteId = null;
+
+      const token = localStorage.getItem("token");
+      const apiUrl = "http://127.0.0.1:8000/api/books";
+
+      if (!token) {
+        console.log('No token found, user not logged in.');
+        $('#currentUser').text('Guest');
+      } else {
+        fetchUserInfo();
+      }
+
+      function fetchUserInfo() {
+        $.ajax({
+          url: 'http://127.0.0.1:8000/api/me',
+          type: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Accept': 'application/json'
+          },
+          success: function(response) {
+            $('#currentUser').text(response.user?.name || 'Unknown');
+          },
+          error: function() {
+            $('#currentUser').text('Guest');
+          }
+        });
+      }
+
+      function fetchBooks() {
+        $.ajax({
+          url: apiUrl,
+          method: "GET",
+          headers: { Authorization: "Bearer " + token },
+          success: function (response) {
+            books = response.data || response;
+            renderBooks();
+          },
+          error: function (xhr) {
+            console.error("Fetch error:", xhr.responseText);
+          },
+        });
+      }
+
+      function renderBooks() {
+        $bookList.empty();
+        if (!books.length) {
+          $bookList.append(`<tr><td colspan="8" class="text-center text-muted">No books available</td></tr>`);
+          return;
+        }
+
+        $.each(books, function (_, book) {
+          $bookList.append(`
+            <tr>
+              <td>${book.id}</td>
+              <td><img src="${book.image ||" "}" class="book-cover" alt="Cover"></td>
+              <td>${book.title}</td>
+              <td>${book.author}</td>
+              <td>${book.category}</td>
+              <td>${book.quantity}</td>
+              <td>${book.description}</td>
+              <td>
+                <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="${book.id}">
+                  <i class="bi bi-pencil-fill"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="${book.id}">
+                  <i class="bi bi-trash-fill"></i> Delete
+                </button>
+              </td>
+            </tr>
+          `);
+        });
+      }
+
+      $("#addBookForm").on("submit", function (e) {
+        e.preventDefault();
+
+        const fileInput = $("#addBookImage")[0].files[0];
+        const formData = new FormData();
+        formData.append("title", $("#addBookTitle").val());
+        formData.append("author", $("#addBookAuthor").val());
+        formData.append("category", $("#addBookCategory").val());
+        formData.append("quantity", $("#addBookQuantity").val());
+        formData.append("description", $("#addBookDescription").val());
+        if (fileInput) formData.append("image", fileInput);
+
+        $.ajax({
+          url: apiUrl,
+          type: "POST",
+          headers: { Authorization: "Bearer " + token },
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function () {
+            fetchBooks();
+            addModal.hide();
+            $("#addBookForm")[0].reset();
+          },
+          error: function (xhr) {
+            console.error(xhr.responseText);
+          },
+        });
+      });
+
+      $bookList.on("click", ".edit-btn", function () {
+        const id = $(this).data("id");
+        const book = books.find((b) => b.id == id);
+        if (!book) return alert("Book not found!");
+
+        $("#editBookIndex").val(book.id);
+        $("#editBookTitle").val(book.title);
+        $("#editBookAuthor").val(book.author);
+        $("#editBookCategory").val(book.category);
+        $("#editBookQuantity").val(book.quantity);
+        $("#editBookDescription").val(book.description);
+        $("#editBookPreview").attr("src", book.image || "");
+        $("#editBookImage").val("");
+
+        editModal.show();
+      });
+
+      $("#editBookImage").on("change", function () {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            $("#editBookPreview").attr("src", e.target.result);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          const bookId = $("#editBookIndex").val();
+          const book = books.find(b => b.id == bookId);
+          $("#editBookPreview").attr("src", book ? book.image : "");
+        }
+      });
+
+      $("#editBookForm").on("submit", function (e) {
+        e.preventDefault();
+
+        const id = $("#editBookIndex").val();
+        const fileInput = $("#editBookImage")[0].files[0];
+        const formData = new FormData();
+        formData.append("title", $("#editBookTitle").val());
+        formData.append("author", $("#editBookAuthor").val());
+        formData.append("category", $("#editBookCategory").val());
+        formData.append("quantity", $("#editBookQuantity").val());
+        formData.append("description", $("#editBookDescription").val());
+        if (fileInput) formData.append("image", fileInput);
+        formData.append("_method", "PUT");
+
+        $.ajax({
+          url: `${apiUrl}/${id}`,
+          type: "POST",
+          headers: { Authorization: "Bearer " + token },
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function () {
+            fetchBooks();
+            editModal.hide();
+          },
+          error: function (xhr) {
+            console.error(xhr.responseText);
+          },
+        });
+      });
+
+      $bookList.on("click", ".delete-btn", function () {
+        deleteId = $(this).data("id");
+        deleteModal.show();
+      });
+
+      $("#confirmDeleteBtn").click(function () {
+        if (!deleteId) return;
+        $.ajax({
+          url: `${apiUrl}/${deleteId}`,
+          type: "DELETE",
+          headers: { Authorization: "Bearer " + token },
+          success: function () {
+            fetchBooks();
+            deleteModal.hide();
+          },
+          error: function (xhr) {
+            console.error(xhr.responseText);
+          },
+        });
+      });
+
+      function filterBooks(query) {
+        const lowerQuery = query.toLowerCase();
+        return books.filter(
+          b =>
+            b.title.toLowerCase().includes(lowerQuery) ||
+            b.author.toLowerCase().includes(lowerQuery) ||
+            b.category.toLowerCase().includes(lowerQuery)
+        );
+      }
+
+      function renderFilteredBooks(filtered) {
+        $bookList.empty();
+
+        if (!filtered.length) {
+          $bookList.append(`<tr><td colspan="8" class="text-center text-muted">No matching books found</td></tr>`);
+          return;
+        }
+
+        $.each(filtered, function (_, book) {
+          $bookList.append(`
+            <tr>
+              <td>${book.id}</td>
+              <td><img src="${book.image || ""}" class="book-cover" alt="Cover"></td>
+              <td>${book.title}</td>
+              <td>${book.author}</td>
+              <td>${book.category}</td>
+              <td>${book.quantity}</td>
+              <td>${book.description}</td>
+              <td>
+                <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="${book.id}">
+                  <i class="bi bi-pencil-fill"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="${book.id}">
+                  <i class="bi bi-trash-fill"></i> Delete
+                </button>
+              </td>
+            </tr>
+          `);
+        });
+      }
+
+      $("#searchBtnTop").click(function() {
+        const query = $("#searchInputTop").val();
+        const filtered = filterBooks(query);
+        renderFilteredBooks(filtered);
+      });
+
+      $("#searchInputTop").on("keyup", function() {
+        const query = $(this).val();
+        const filtered = filterBooks(query);
+        renderFilteredBooks(filtered);
+      });
+
+      fetchBooks();
+    });
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'register.html';
+    }
+  </script>
+</body>
+</html>

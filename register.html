@@ -12,12 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
 </head>
-
 <body>
     <div class="container">
         <div class="form-wrapper">
-            <img src="/img/back.png" class="img-left" alt="" />
-            <img src="/img/img.png" class="img-right" alt="" />
+            <img src="img/back.png" class="img-left" alt="" />
+            <img src="img/img.png" class="img-right" alt="" />
             <div class="form-wrapper-bg"></div>
 
             <!-- ✅ Sign Up Form -->
@@ -48,9 +47,9 @@
             <!-- Sign In Form -->
             <div class="form-wrapper-right">
                 <h1>sign In</h1>
-                <form class="form-signup" id="signInform">
+                <form class="form-signup" id="signInform" method="post">
                     <div class="input-group">
-                        <input type="text" name="name" placeholder="UserName" />
+                        <input type="email" name="email" placeholder="Email" />
                         <i class="fa-solid fa-user"></i>
                     </div>
 
@@ -65,69 +64,80 @@
             </div>
         </div>
     </div>
-    <script src="/Js/script.js"></script>
+    <script src="Js/script.js"></script>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    $(document).ready(function(){
-        $('#sigUpform').on('submit', function(e) {
-            e.preventDefault(); // Prevent default form submission
+$(document).ready(function(){
 
-            var formData = $(this).serialize(); // Serialize the form data
+    // ---------------- Sign Up ----------------
+    $('#sigUpform').on('submit', function(e) {
+        e.preventDefault();
 
-            $.ajax({
-                url: 'http://127.0.0.1:8000/api/register',   // Laravel route
-                type: 'POST',
-                data: formData,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF token
-                },
-                success: function(response) {
-                    console.log('Success:', response);
+        var formData = $(this).serialize();
 
-                    // Assuming your API returns: { token: "some_jwt_token", user: {...} }
-                    if(response.token) {
-                        localStorage.setItem('token', response.token);  // Store token in localStorage
-                        alert('Registration successful!');
-                    } else {
-                        alert('Registration succeeded, but no token received!');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', xhr.responseText);
-                    alert('Registration failed!');
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/register',
+            type: 'POST',
+            data: formData,
+            headers: {
+                'Accept': 'application/json'  // Important for JSON response
+            },
+            success: function(response) {
+                console.log('Success:', response);
+                if(response.token){
+                    localStorage.setItem('token', response.token);
+                    // alert('✅ Registration successful!');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert('Registration succeeded but no token received!');
                 }
-            });
-        });
-
-        $('#signInform').on('submit', function(e) {
-            e.preventDefault();
-
-            var formData = $(this).serialize();
-
-            $.ajax({
-                url: 'http://127.0.0.1:8000/api/login',
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    console.log('Login Success:', response);
-
-                    if (response.token) {
-                        localStorage.setItem('token', response.token);
-                        alert('Login successful!');
-                        // Optionally redirect:
-                        // window.location.href = 'dashboard.html';
-                    } else {
-                        alert('Login succeeded, but no token received!');
-                    }
-                },
-                error: function(xhr) {
-                    console.error('Login Error:', xhr.responseText);
-                    alert('Login failed!');
+            },
+            error: function(xhr){
+                console.error('Error:', xhr.responseJSON);
+                let msg = 'Registration failed!';
+                if(xhr.responseJSON && xhr.responseJSON.message){
+                    msg = xhr.responseJSON.message;
                 }
-            });
+                alert(msg);
+            }
         });
     });
-</script>
 
+    // ---------------- Sign In ----------------
+    $('#signInform').on('submit', function(e) {
+        e.preventDefault();
+
+        var formData = $(this).serialize();
+
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/login',
+            type: 'POST',
+            data: formData,
+            headers: {
+                'Accept': 'application/json'
+            },
+            success: function(response){
+                console.log('Login success:', response);
+                if(response.token){
+                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('user', JSON.stringify(response.user));
+                    // alert('✅ Login successful!');
+                    window.location.href = 'dashboard.html';
+                }
+            },
+            error: function(xhr){
+                console.error('Login error:', xhr.responseJSON);
+                let msg = 'Login failed!';
+                if(xhr.responseJSON && xhr.responseJSON.message){
+                    msg = xhr.responseJSON.message;
+                }
+                alert(msg);
+            }
+        });
+    });
+
+});
+</script>
 </html>
+
